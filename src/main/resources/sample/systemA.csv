@@ -1,0 +1,4 @@
+tradeId,symbol,side,quantity,price
+T001,AAPL,BUY,100,180.5
+T002,GOOG,SELL,50,2700.1
+T003,MSFT,BUY,30,300.0
