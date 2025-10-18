@@ -15,6 +15,7 @@ public class ReconciliationService {
     }
 
     public List<MatchResult> reconcileTrades(List<Trade> systemA, List<Trade> systemB) {
+        System.out.println("ReconciliationService reconcileTrades");
         Map<String, Trade> mapA = mapTrades(systemA);
         Map<String, Trade> mapB = mapTrades(systemB);
 
@@ -105,4 +106,7 @@ public class ReconciliationService {
         return differences;
     }
 
+    public List<MatchResult> reconcileTradesParallel(List<Trade> systemA, List<Trade> systemB) {
+        return new ArrayList<>();
+    }
 }
