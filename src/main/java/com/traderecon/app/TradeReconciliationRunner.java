@@ -50,7 +50,7 @@ public class TradeReconciliationRunner {
         if (!parallel) {
             results = service.reconcileTrades(systemA, systemB);
         } else {
-            results = service.reconcileTradesParallel(systemA, systemB);
+            results = service.reconcileTradesParallel(systemA, systemB, threads);
         }
 
         if (export) {

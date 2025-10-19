@@ -5,6 +5,7 @@ import com.traderecon.core.MatchResult;
 import com.traderecon.core.MatchStatus;
 import com.traderecon.core.Trade;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 
 public class ReconciliationService {
 
@@ -106,7 +107,37 @@ public class ReconciliationService {
         return differences;
     }
 
-    public List<MatchResult> reconcileTradesParallel(List<Trade> systemA, List<Trade> systemB) {
+    public List<MatchResult> reconcileTradesParallel(List<Trade> systemA, List<Trade> systemB, int numberOfThreads) {
+        Map<String, Trade> mapA = mapTrades(systemA);
+        Map<String, Trade> mapB = mapTrades(systemB);
+
+        Set<String> allTradeIds = new HashSet<>();
+        allTradeIds.addAll(mapA.keySet());
+        allTradeIds.addAll(mapB.keySet());
+
+        List<Set<String>> partitions = partitionTradeIds(allTradeIds, numberOfThreads);
+
         return new ArrayList<>();
+    }
+
+    private List<Set<String>> partitionTradeIds(Set<String> allTradeIds, int numberOfThreads) {
+        List<Set<String>> partitions = new ArrayList<>();
+        int chunkSize = Math.max(1, (int) Math.ceil((double) allTradeIds.size() / numberOfThreads));
+        Set<String> currentChunk = new HashSet<>();
+
+        for (String tradeId : allTradeIds) {
+            currentChunk.add(tradeId);
+            if (currentChunk.size() == chunkSize) {
+                partitions.add(currentChunk);
+                currentChunk = new HashSet<>();
+            }
+        }
+
+        if (!currentChunk.isEmpty()) {
+            partitions.add(currentChunk);
+        }
+
+
+        return partitions;
     }
 }
