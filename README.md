@@ -85,8 +85,8 @@ T003,MSFT,BUY,30,300.0
 Optional settings can be adjusted in config.properties:
 
 - caseInsensitiveSymbols=true
-- priceTolerance=0.01
-- quantityTolerance=0.01
+- priceTolerance=0.0001
+- quantityTolerance=0
 
 
 This allows traders to tune the reconciliation logic without changing code.
