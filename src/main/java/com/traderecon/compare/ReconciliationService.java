@@ -5,7 +5,10 @@ import com.traderecon.core.MatchResult;
 import com.traderecon.core.MatchStatus;
 import com.traderecon.core.Trade;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class ReconciliationService {
 
@@ -45,7 +48,7 @@ public class ReconciliationService {
         return matchResults;
     }
 
-    private List<String> getMissingTradeIdDifferencesAsList() {
+    public List<String> getMissingTradeIdDifferencesAsList() {
         return Arrays.asList(
                 "Action missing",
                 "Symbol missing",
@@ -117,7 +120,28 @@ public class ReconciliationService {
 
         List<Set<String>> partitions = partitionTradeIds(allTradeIds, numberOfThreads);
 
-        return new ArrayList<>();
+        ExecutorService executor = Executors.newFixedThreadPool(numberOfThreads);
+        List<Future<List<MatchResult>>> futures = new ArrayList<>();
+
+        for (Set<String> partition : partitions) {
+            System.out.println("Submitting a new task");
+            ReconciliationTask task = new ReconciliationTask(partition, mapA, mapB, appConfig, this);
+            futures.add(executor.submit(task));
+
+        }
+
+        List<MatchResult> allResults = new ArrayList<>();
+        for (Future<List<MatchResult>> future : futures) {
+            try {
+                allResults.addAll(future.get());
+            } catch (ExecutionException | InterruptedException e) {
+                System.err.println("Error in thread: " + e.getMessage());
+            }
+        }
+
+        executor.shutdown();
+
+        return allResults;
     }
 
     private List<Set<String>> partitionTradeIds(Set<String> allTradeIds, int numberOfThreads) {
