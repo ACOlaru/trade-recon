@@ -98,6 +98,12 @@ This allows traders to tune the reconciliation logic without changing code.
 - Real-time trade streaming and reconciliation
 - Enhanced logging and analytics for reports
 - Configurable output folder and filename patterns
+- 
+## Learn More
+
+I wrote a detailed article about this project on Medium, explaining the architecture, design patterns, and concurrency challenges:
+
+[Building a Multithreaded Trade Reconciliation Tool in Java](https://medium.com/@olarualexandra/building-a-multithreaded-trade-reconciliation-tool-in-java-e7f192c8865b)
 
 ## License
 
